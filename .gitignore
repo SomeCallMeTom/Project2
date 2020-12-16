@@ -7,3 +7,5 @@
 !.*
 !diagrams/
 !diagrams/*
+!source/
+!source/*

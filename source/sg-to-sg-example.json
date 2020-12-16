@@ -1,0 +1,48 @@
+    "WebInstanceSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow HTTP from ALB, SSH from Bastion Host",
+        "GroupName": "WEBSG",
+        "VpcId": { "Ref": "VPC" }
+      }
+    },
+    "WebInstanceInboundRule1": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": 80,
+        "ToPort": 80,
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "ALBSecurityGroup",
+            "GroupId"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "WebInstanceSecurityGroup",
+            "GroupId"
+          ]
+        }
+      }
+    },
+    "WebInstanceInboundRule2": {
+      "Type": "AWS::EC2::SecurityGroupIngress",
+      "Properties": {
+        "IpProtocol": "tcp",
+        "FromPort": 22,
+        "ToPort": 22,
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
+            "BastionHostSecurityGroup",
+            "GroupId"
+          ]
+        },
+        "GroupId": {
+          "Fn::GetAtt": [
+            "WebInstanceSecurityGroup",
+            "GroupId"
+          ]
+        }
+      }
+    },
