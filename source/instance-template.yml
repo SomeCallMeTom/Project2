@@ -48,7 +48,7 @@ Resources:
       KeyName: "project2"
       SubnetId: !Ref PrivateSubnet2
       SecurityGroupIds:
-       - !Ref WebInstanceSecurityGroup
+        - !Ref WebInstanceSecurityGroup
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -88,4 +88,4 @@ Outputs:
       Fn::Join:
         - ""
         - - http://
-          - !GetAtt  ApplicationLoadBalancer.DNSName
+          - !GetAtt ApplicationLoadBalancer.DNSName

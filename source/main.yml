@@ -1,28 +1,21 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Deploy Network and Compute Stacks
 Parameters:
 Resources:
   NetworkStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL:  https://darlington.project2.s3.amazonaws.com/network-template.yml
+      TemplateURL: https://darlington.project2.s3.amazonaws.com/network-template.yml
   ComputeStack:
     Type: AWS::CloudFormation::Stack
-    DependsOn:  NetworkStack
+    DependsOn: NetworkStack
     Properties:
-      TemplateURL:  https://darlington.project2.s3.amazonaws.com/instance-template.yml
+      TemplateURL: https://darlington.project2.s3.amazonaws.com/instance-template.yml
       Paramaters:
-        VPC:
-          !GetAtt NetworkStack.Outputs.VPC
-        PrivateSubnet1:
-          !GetAtt NetworkStack.Outputs.PrivateSubnet1
-        PrivateSubnet2:
-          !GetAtt NetworkStack.Outputs.PrivateSubnet2
-        PublicSubnet1:
-          !GetAtt NetworkStack.Outputs.PublicSubnet1
-        PublicSubnet2:
-          !GetAtt NetworkStack.Outputs.PublicSubnet2
-        WebInstacneSecurityGroup:
-          !GetAtt NetworkStack.Outputs.WebInstanceSecurityGroup
-        ALBSecurityGroup:
-          !GetAtt NetworkStack.Outputs.ALBSecurityGroup
+        VPC: !GetAtt NetworkStack.Outputs.VPC
+        PrivateSubnet1: !GetAtt NetworkStack.Outputs.PrivateSubnet1
+        PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2
+        PublicSubnet1: !GetAtt NetworkStack.Outputs.PublicSubnet1
+        PublicSubnet2: !GetAtt NetworkStack.Outputs.PublicSubnet2
+        WebInstacneSecurityGroup: !GetAtt NetworkStack.Outputs.WebInstanceSecurityGroup
+        ALBSecurityGroup: !GetAtt NetworkStack.Outputs.ALBSecurityGroup

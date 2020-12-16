@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Deploy Network and Security Groups for Project 2
 Resources:
   VPC:
@@ -8,7 +8,7 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: project2 VPC    
+          Value: project2 VPC
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
@@ -18,58 +18,58 @@ Resources:
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: 
+      VpcId:
         Ref: VPC
-      InternetGatewayId: 
+      InternetGatewayId:
         Ref: InternetGateway
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.1.0/24
-      VpcId: 
+      VpcId:
         Ref: VPC
       AvailabilityZone: "us-east-1a"
       Tags:
-      - Key: Name
-        Value: "Public Subnet 1"
+        - Key: Name
+          Value: "Public Subnet 1"
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.2.0/24
-      VpcId: 
+      VpcId:
         Ref: VPC
       AvailabilityZone: "us-east-1b"
       Tags:
-      - Key: Name
-        Value: "Public Subnet 2"
+        - Key: Name
+          Value: "Public Subnet 2"
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.3.0/24
-      VpcId: 
+      VpcId:
         Ref: VPC
       AvailabilityZone: "us-east-1a"
       Tags:
-      - Key: Name
-        Value: "Private Subnet 1"
+        - Key: Name
+          Value: "Private Subnet 1"
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.4.0/24
-      VpcId: 
+      VpcId:
         Ref: VPC
       AvailabilityZone: "us-east-1b"
       Tags:
-      - Key: Name
-        Value: "Private Subnet 2"
+        - Key: Name
+          Value: "Private Subnet 2"
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:
         Ref: VPC
-      Tags: 
-      - Key: Name
-        Value: Public Route Table
+      Tags:
+        - Key: Name
+          Value: Public Route Table
   PublicRoute:
     Type: AWS::EC2::Route
     Properties:
@@ -102,27 +102,27 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 0.0.0.0/0 
+          CidrIp: 0.0.0.0/0
   WebInstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-        GroupDescription: Allow traffic from ALB to Web Servers
-        GroupName:  WebServerSG
-        VpcId: !Ref VPC
+      GroupDescription: Allow traffic from ALB to Web Servers
+      GroupName: WebServerSG
+      VpcId: !Ref VPC
   WebInstanceSecurityGroupIngressRule:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
-        IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
-        SourceSecurityGroupId: !Ref ALBSecurityGroup
-        GroupId:  !Ref WebInstanceSecurityGroup
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupId: !Ref ALBSecurityGroup
+      GroupId: !Ref WebInstanceSecurityGroup
 
   # Optional BastionSercurityGroup if you build a Bastion Host
 
 Outputs:
-# This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use
-# by another template
+  # This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use
+  # by another template
   VPC:
     Description: VPC
     Value: !Ref VPC
