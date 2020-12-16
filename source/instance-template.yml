@@ -1,12 +1,33 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Deploy EC2 instances and ALB for Project 1 - Outline of Resources/Parameters
+Description: Deploy EC2 instances and ALB for Project 2
 
 # Need to ask user for name of network stack
 Parameters:
   NetworkStackName:
     Type: String
-    Description: Name of the Cloud Formation Template 1 - Network Stack
-    Default: Project1Network
+    Description: Name of the Cloud Formation Template 2 - Network Stack
+    Default: project2Network
+  VPC:
+    Type: String
+    Description: VPC ID
+  PrivateSubnet1:
+    Type: String
+    Description: Private Subnet 1 ID
+  PrivateSubnet2:
+    Type: String
+    Description: Private Subnet 2 ID
+  PublicSubnet1:
+    Type: String
+    Description: Public Subnet 1 ID
+  PublicSubnet2:
+    Type: String
+    Description: Public Subnet 2 ID
+  WebInstanceSecurityGroup:
+    Type: String
+    Description: Web Instance Security Group ID
+  ALBSecurityGroup:
+    Type: String
+    Description: Load Balancer Security Group ID
 Resources:
 
   # Optional BastionHostInstance would go here
@@ -16,7 +37,7 @@ Resources:
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
-      KeyName: "project1"
+      KeyName: "project2"
       SubnetId:
         Fn::ImportValue:
           !Sub "${NetworkStackName}-PvtSub1"
@@ -28,7 +49,7 @@ Resources:
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
-      KeyName: "project1"
+      KeyName: "project2"
       SubnetId:
         Fn::ImportValue:
           !Sub "${NetworkStackName}-PvtSub2"
@@ -51,7 +72,7 @@ Resources:
         Fn::ImportValue:
           !Sub "${NetworkStackName}-VPCID"
       HealthyThresholdCount: 2
-      Name: Project1ALBTargetGroup
+      Name: project2ALBTargetGroup
       Port: 80
       Protocol: HTTP
       Targets:

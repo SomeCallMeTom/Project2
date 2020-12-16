@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Deploy Network and Security Groups for Project 1 - Outline of Resources
-# This should be all the basic sections needed in Project #1
+Description: Deploy Network and Security Groups for Project 2
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -9,13 +8,13 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: Project1 VPC    
+          Value: project2 VPC    
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: Project1 InternetGW
+          Value: project2 InternetGW
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:

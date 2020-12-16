@@ -11,3 +11,18 @@ Resources:
     DependsOn:  NetworkStack
     Properties:
       TemplateURL:  https://darlington.project2.s3.amazonaws.com/instance-template.yml
+      Paramaters:
+        VPC:
+          !GetAtt NetworkStack.Outputs.VPC
+        PrivateSubnet1:
+          !GetAtt NetworkStack.Outputs.PrivateSubnet1
+        PrivateSubnet2:
+          !GetAtt NetworkStack.Outputs.PrivateSubnet2
+        PublicSubnet1:
+          !GetAtt NetworkStack.Outputs.PublicSubnet1
+        PublicSubnet2:
+          !GetAtt NetworkStack.Outputs.PublicSubnet2
+        WebInstacneSecurityGroup:
+          !GetAtt NetworkStack.Outputs.WebInstanceSecurityGroup
+        ALBSecurityGroup:
+          !GetAtt NetworkStack.Outputs.ALBSecurityGroup
