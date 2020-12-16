@@ -81,8 +81,4 @@ Outputs:
       - - http://
         - Fn::GetAtt:
           - ApplicationLoadBalancer
-<<<<<<< HEAD
           - DNSName
-=======
-          - DNSName
->>>>>>> 4b3723a3e29d9d4f395ae08546dc3ce481bf4bad
