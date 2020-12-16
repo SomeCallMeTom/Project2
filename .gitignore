@@ -1,9 +1,7 @@
 # Ignore everything:
 *
 
-# Except for the src & gitignore:
-!src/
-!src/*
+# Except for the source & gitignore:
 !.*
 !diagrams/
 !diagrams/*
