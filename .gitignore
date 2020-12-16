@@ -1,0 +1,9 @@
+# Ignore everything:
+*
+
+# Except for the src & gitignore:
+!src/
+!src/*
+!.*
+!diagrams/
+!diagrams/*
