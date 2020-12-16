@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy Network and Compute Stacks
+Parameters:
+Resources:
+  NetworkStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:  https://darlington.project2.s3.amazonaws.com/network-template.yml
+  ComputeStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn:  NetworkStack
+    Properties:
+      TemplateURL:  https://darlington.project2.s3.amazonaws.com/instance-template.yml
