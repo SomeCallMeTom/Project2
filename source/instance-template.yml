@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: Deploy EC2 instances and ALB for Project 2
 
 # Need to ask user for name of network stack
@@ -29,7 +29,6 @@ Parameters:
     Type: String
     Description: Load Balancer Security Group ID
 Resources:
-
   # Optional BastionHostInstance would go here
 
   WebServerInstance1:
@@ -38,29 +37,23 @@ Resources:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
       KeyName: "project2"
-      SubnetId:
-        Fn::ImportValue:
-          !Sub "${NetworkStackName}-PvtSub1"
+      SubnetId: !Ref PrivateSubnet1
       SecurityGroupIds:
-        - Fn::ImportValue:
-            !Sub "${NetworkStackName}-WebServSG"
+        - !Ref WebInstanceSecurityGroup
   WebServerInstance2:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
       KeyName: "project2"
-      SubnetId:
-        Fn::ImportValue:
-          !Sub "${NetworkStackName}-PvtSub2"
+      SubnetId: !Ref PrivateSubnet2
       SecurityGroupIds:
-        - Fn::ImportValue:
-            !Sub "${NetworkStackName}-WebServSG"
+       - !Ref WebInstanceSecurityGroup
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
-        - Type: forward
+        - Type: Forward
           TargetGroupArn: !Ref ALBTargetGroup
       LoadBalancerArn: !Ref ApplicationLoadBalancer
       Protocol: HTTP
@@ -68,15 +61,13 @@ Resources:
   ALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      VpcId: 
-        Fn::ImportValue:
-          !Sub "${NetworkStackName}-VPCID"
+      VpcId: !Ref VPC
       HealthyThresholdCount: 2
       Name: project2ALBTargetGroup
       Port: 80
       Protocol: HTTP
       Targets:
-        - Id: !Ref  WebServerInstance1
+        - Id: !Ref WebServerInstance1
           Port: 80
         - Id: !Ref WebServerInstance2
           Port: 80
@@ -86,20 +77,15 @@ Resources:
       Scheme: internet-facing
       Name: Proj1LoadBalancer
       SecurityGroups:
-      - Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-ALBSG"
+        - !Ref ALBSecurityGroup
       Subnets:
-      - Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-PubSub1"
-      - Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-PubSub2"
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
 Outputs:
   ApplicationLoadBalancer:
     Description: URL of the Loadbalancer
     Value:
       Fn::Join:
-      - ''
-      - - http://
-        - Fn::GetAtt:
-          - ApplicationLoadBalancer
-          - DNSName
+        - ""
+        - - http://
+          - !GetAtt  ApplicationLoadBalancer.DNSName
