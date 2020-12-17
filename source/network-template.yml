@@ -22,6 +22,9 @@ Resources:
         Ref: VPC
       InternetGatewayId:
         Ref: InternetGateway
+  
+  # Public Subnets
+
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -42,6 +45,9 @@ Resources:
       Tags:
         - Key: Name
           Value: "Public Subnet 2"
+
+  #Private Subnets
+
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -62,6 +68,9 @@ Resources:
       Tags:
         - Key: Name
           Value: "Private Subnet 2"
+  
+  #Public Routing
+
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -92,7 +101,10 @@ Resources:
         Ref: PublicSubnet2
       RouteTableId:
         Ref: PublicRouteTable
-    PrivateRouteTable:
+  
+  #Private Routing
+  
+  PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:
@@ -122,6 +134,9 @@ Resources:
         Ref: PrivateSubnet2
       RouteTableId:
         Ref: PrivateRouteTable
+
+  #Security Groups
+
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
