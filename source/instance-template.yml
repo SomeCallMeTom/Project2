@@ -24,9 +24,27 @@ Parameters:
   ALBSecurityGroup:
     Type: String
     Description: Load Balancer Security Group ID
-Resources:
-  # Optional BastionHostInstance would go here
+  BastionHostSecurityGroup:
+    Type: String
+    Description: Bastion Host Security Group ID
 
+Resources:
+
+  BastionHostInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-04d29b6f966df1537
+      InstanceType: t2.micro
+      KeyName: "project1"
+      SubnetId: !Ref PublicSubnet2
+      SecurityGroupIds:
+        - !Ref BastionHostSecurityGroup
+  BastionElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId:
+        Ref: BastionHostInstance
   WebServerInstance1:
     Type: AWS::EC2::Instance
     Properties:
