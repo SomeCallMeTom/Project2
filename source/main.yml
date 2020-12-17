@@ -7,7 +7,6 @@ Resources:
       TemplateURL: https://darlington.project2.s3.amazonaws.com/network-template.yml
   ComputeStack:
     Type: AWS::CloudFormation::Stack
-    DependsOn: NetworkStack
     Properties:
       TemplateURL: https://darlington.project2.s3.amazonaws.com/instance-template.yml
       Parameters:
