@@ -17,3 +17,4 @@ Resources:
         PublicSubnet2: !GetAtt NetworkStack.Outputs.PublicSubnet2
         WebInstanceSecurityGroup: !GetAtt NetworkStack.Outputs.WebInstanceSecurityGroup
         ALBSecurityGroup: !GetAtt NetworkStack.Outputs.ALBSecurityGroup
+        BastionHostSecurityGroup: !GetAtt  NetworkStack.Outputs.BastionHostSecurityGroup
