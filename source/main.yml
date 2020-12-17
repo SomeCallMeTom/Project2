@@ -16,5 +16,5 @@ Resources:
         PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2
         PublicSubnet1: !GetAtt NetworkStack.Outputs.PublicSubnet1
         PublicSubnet2: !GetAtt NetworkStack.Outputs.PublicSubnet2
-        WebInstacneSecurityGroup: !GetAtt NetworkStack.Outputs.WebInstanceSecurityGroup
+        WebInstanceSecurityGroup: !GetAtt NetworkStack.Outputs.WebInstanceSecurityGroup
         ALBSecurityGroup: !GetAtt NetworkStack.Outputs.ALBSecurityGroup
