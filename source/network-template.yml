@@ -1,6 +1,8 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Deploy Network and Security Groups for Project 2
 Resources:
+  #Network Basics
+
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -22,9 +24,13 @@ Resources:
         Ref: VPC
       InternetGatewayId:
         Ref: InternetGateway
+
+  # Public Subnets
+
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: true
       CidrBlock: 10.0.1.0/24
       VpcId:
         Ref: VPC
@@ -35,6 +41,7 @@ Resources:
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
+      MapPublicIpOnLaunch: true
       CidrBlock: 10.0.2.0/24
       VpcId:
         Ref: VPC
@@ -42,6 +49,9 @@ Resources:
       Tags:
         - Key: Name
           Value: "Public Subnet 2"
+
+  #Private Subnets
+
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -62,6 +72,9 @@ Resources:
       Tags:
         - Key: Name
           Value: "Private Subnet 2"
+
+  #Public Routing
+
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -92,6 +105,72 @@ Resources:
         Ref: PublicSubnet2
       RouteTableId:
         Ref: PublicRouteTable
+
+  #NAT
+
+  NATElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId:
+        Ref: NATInstance
+  NATInstance:
+    Type: AWS::EC2::Instance
+    DependsOn: VPC
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0422d936d535c63b1
+      SubnetId: !Ref PublicSubnet1
+      KeyName: "project1"
+      SourceDestCheck: false
+      SecurityGroupIds:
+        - !Ref NATSecurityGroup
+
+  #Private Routing
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: VPC
+      Tags:
+        - Key: Name
+          Value: Private Route Table
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId:
+        Ref: NATInstance
+  PrivateSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PrivateSubnet1
+      RouteTableId:
+        Ref: PrivateRouteTable
+  PrivateSubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: PrivateSubnet2
+      RouteTableId:
+        Ref: PrivateRouteTable
+
+  #Security Groups
+
+  NATSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow all  traffic from VPC
+      GroupName: NATSecurityGroup
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: "-1"
+          CidrIp: 10.0.0.0/16
+
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -103,13 +182,25 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
+  BastionHostSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH from
+      GroupName: BastionHostSG
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
   WebInstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow traffic from ALB to Web Servers
+      GroupDescription: Allow traffic from ALB to Web Servers, SSH from BastionHost
       GroupName: WebServerSG
       VpcId: !Ref VPC
-  WebInstanceSecurityGroupIngressRule:
+  WebInstanceSecurityGroupIngressRuleALB:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
       IpProtocol: tcp
@@ -117,8 +208,14 @@ Resources:
       ToPort: 80
       SourceSecurityGroupId: !Ref ALBSecurityGroup
       GroupId: !Ref WebInstanceSecurityGroup
-
-  # Optional BastionSercurityGroup if you build a Bastion Host
+  WebInstanceSecurityGroupIngressRuleBastion:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      SourceSecurityGroupId: !Ref BastionHostSecurityGroup
+      GroupId: !Ref WebInstanceSecurityGroup
 
 Outputs:
   # This is an example of the complete YAML code for outputting the VPC information and also exporting the VPC ID for use
@@ -144,3 +241,6 @@ Outputs:
   ALBSecurityGroup:
     Description: Allow all http traffic on tcp port 80
     Value: !Ref ALBSecurityGroup
+  BastionHostSecurityGroup:
+    Description: Bastion Host Security Group ID
+    Value: !Ref BastionHostSecurityGroup

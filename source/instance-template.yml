@@ -3,10 +3,6 @@ Description: Deploy EC2 instances and ALB for Project 2
 
 # Need to ask user for name of network stack
 Parameters:
-  NetworkStackName:
-    Type: String
-    Description: Name of the Cloud Formation Template 2 - Network Stack
-    Default: project2Network
   VPC:
     Type: String
     Description: VPC ID
@@ -28,15 +24,33 @@ Parameters:
   ALBSecurityGroup:
     Type: String
     Description: Load Balancer Security Group ID
-Resources:
-  # Optional BastionHostInstance would go here
+  BastionHostSecurityGroup:
+    Type: String
+    Description: Bastion Host Security Group ID
 
+Resources:
+
+  BastionHostInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-04d29b6f966df1537
+      InstanceType: t2.micro
+      KeyName: "project1"
+      SubnetId: !Ref PublicSubnet2
+      SecurityGroupIds:
+        - !Ref BastionHostSecurityGroup
+  BastionElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId:
+        Ref: BastionHostInstance
   WebServerInstance1:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
-      KeyName: "project2"
+      KeyName: "project1"
       SubnetId: !Ref PrivateSubnet1
       SecurityGroupIds:
         - !Ref WebInstanceSecurityGroup
@@ -45,7 +59,7 @@ Resources:
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
-      KeyName: "project2"
+      KeyName: "project1"
       SubnetId: !Ref PrivateSubnet2
       SecurityGroupIds:
         - !Ref WebInstanceSecurityGroup
@@ -53,7 +67,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
-        - Type: Forward
+        - Type: forward
           TargetGroupArn: !Ref ALBTargetGroup
       LoadBalancerArn: !Ref ApplicationLoadBalancer
       Protocol: HTTP
@@ -75,7 +89,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Scheme: internet-facing
-      Name: Proj1LoadBalancer
+      Name: Proj2LoadBalancer
       SecurityGroups:
         - !Ref ALBSecurityGroup
       Subnets:
