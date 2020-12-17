@@ -3,10 +3,6 @@ Description: Deploy EC2 instances and ALB for Project 2
 
 # Need to ask user for name of network stack
 Parameters:
-  NetworkStackName:
-    Type: String
-    Description: Name of the Cloud Formation Template 2 - Network Stack
-    Default: project2Network
   VPC:
     Type: String
     Description: VPC ID

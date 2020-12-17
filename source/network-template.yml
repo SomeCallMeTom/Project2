@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: Deploy Network and Security Groups for Project 2
 Resources:
+
+  #Network Basics
+  
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -102,6 +105,26 @@ Resources:
       RouteTableId:
         Ref: PublicRouteTable
   
+  # NAT
+
+  NATElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      InstanceId:
+        Ref: NATInstance
+  NATInstance:
+    Type: AWS::EC2::Instance
+    DependsOn: VPC
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0422d936d535c63b1 
+      SubnetId: !Ref PublicSubnet1
+      KeyName: 'project2'
+      SourceDestCheck: false
+      SecurityGroups:
+        - !Ref NATSecurityGroup
+
   #Private Routing
   
   PrivateRouteTable:
@@ -137,6 +160,16 @@ Resources:
 
   #Security Groups
 
+  NATSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow all  traffic from VPC
+      GroupName: NATSecurityGroup
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: '-1'
+          CidrIp: 10.0.0.0/16
+
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -148,6 +181,7 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
+          
   WebInstanceSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
