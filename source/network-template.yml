@@ -120,7 +120,7 @@ Resources:
       InstanceType: t2.micro
       ImageId: ami-0422d936d535c63b1 
       SubnetId: !Ref PublicSubnet1
-      KeyName: 'project2'
+      KeyName: 'project1'
       SourceDestCheck: false
       SecurityGroupIds:
         - !Ref NATSecurityGroup

@@ -32,7 +32,7 @@ Resources:
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
-      KeyName: "project2"
+      KeyName: "project1"
       SubnetId: !Ref PrivateSubnet1
       SecurityGroupIds:
         - !Ref WebInstanceSecurityGroup
@@ -41,7 +41,7 @@ Resources:
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
-      KeyName: "project2"
+      KeyName: "project1"
       SubnetId: !Ref PrivateSubnet2
       SecurityGroupIds:
         - !Ref WebInstanceSecurityGroup
