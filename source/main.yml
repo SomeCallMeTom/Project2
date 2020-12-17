@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploy Network and Compute Stacks
+Resources:
+  NetworkStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://darlington.project2.s3.amazonaws.com/network-template.yml
+  ComputeStack:
+    Type: AWS::CloudFormation::Stack
+    DependsOn: NetworkStack
+    Properties:
+      TemplateURL: https://darlington.project2.s3.amazonaws.com/instance-template.yml
+      Parameters:
+        VPC: !GetAtt NetworkStack.Outputs.VPC
+        PrivateSubnet1: !GetAtt NetworkStack.Outputs.PrivateSubnet1
+        PrivateSubnet2: !GetAtt NetworkStack.Outputs.PrivateSubnet2
+        PublicSubnet1: !GetAtt NetworkStack.Outputs.PublicSubnet1
+        PublicSubnet2: !GetAtt NetworkStack.Outputs.PublicSubnet2
+        WebInstacneSecurityGroup: !GetAtt NetworkStack.Outputs.WebInstanceSecurityGroup
+        ALBSecurityGroup: !GetAtt NetworkStack.Outputs.ALBSecurityGroup

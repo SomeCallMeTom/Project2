@@ -1,14 +1,34 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: Deploy EC2 instances and ALB for Project 1 - Outline of Resources/Parameters
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploy EC2 instances and ALB for Project 2
 
 # Need to ask user for name of network stack
 Parameters:
   NetworkStackName:
     Type: String
-    Description: Name of the Cloud Formation Template 1 - Network Stack
-    Default: Project1Network
+    Description: Name of the Cloud Formation Template 2 - Network Stack
+    Default: project2Network
+  VPC:
+    Type: String
+    Description: VPC ID
+  PrivateSubnet1:
+    Type: String
+    Description: Private Subnet 1 ID
+  PrivateSubnet2:
+    Type: String
+    Description: Private Subnet 2 ID
+  PublicSubnet1:
+    Type: String
+    Description: Public Subnet 1 ID
+  PublicSubnet2:
+    Type: String
+    Description: Public Subnet 2 ID
+  WebInstanceSecurityGroup:
+    Type: String
+    Description: Web Instance Security Group ID
+  ALBSecurityGroup:
+    Type: String
+    Description: Load Balancer Security Group ID
 Resources:
-
   # Optional BastionHostInstance would go here
 
   WebServerInstance1:
@@ -16,30 +36,24 @@ Resources:
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
-      KeyName: "project1"
-      SubnetId:
-        Fn::ImportValue:
-          !Sub "${NetworkStackName}-PvtSub1"
+      KeyName: "project2"
+      SubnetId: !Ref PrivateSubnet1
       SecurityGroupIds:
-        - Fn::ImportValue:
-            !Sub "${NetworkStackName}-WebServSG"
+        - !Ref WebInstanceSecurityGroup
   WebServerInstance2:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: "ami-015f56077b7f5b83f"
       InstanceType: t2.micro
-      KeyName: "project1"
-      SubnetId:
-        Fn::ImportValue:
-          !Sub "${NetworkStackName}-PvtSub2"
+      KeyName: "project2"
+      SubnetId: !Ref PrivateSubnet2
       SecurityGroupIds:
-        - Fn::ImportValue:
-            !Sub "${NetworkStackName}-WebServSG"
+        - !Ref WebInstanceSecurityGroup
   ALBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
-        - Type: forward
+        - Type: Forward
           TargetGroupArn: !Ref ALBTargetGroup
       LoadBalancerArn: !Ref ApplicationLoadBalancer
       Protocol: HTTP
@@ -47,15 +61,13 @@ Resources:
   ALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      VpcId: 
-        Fn::ImportValue:
-          !Sub "${NetworkStackName}-VPCID"
+      VpcId: !Ref VPC
       HealthyThresholdCount: 2
-      Name: Project1ALBTargetGroup
+      Name: project2ALBTargetGroup
       Port: 80
       Protocol: HTTP
       Targets:
-        - Id: !Ref  WebServerInstance1
+        - Id: !Ref WebServerInstance1
           Port: 80
         - Id: !Ref WebServerInstance2
           Port: 80
@@ -65,24 +77,15 @@ Resources:
       Scheme: internet-facing
       Name: Proj1LoadBalancer
       SecurityGroups:
-      - Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-ALBSG"
+        - !Ref ALBSecurityGroup
       Subnets:
-      - Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-PubSub1"
-      - Fn::ImportValue:
-          Fn::Sub: "${NetworkStackName}-PubSub2"
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
 Outputs:
   ApplicationLoadBalancer:
     Description: URL of the Loadbalancer
     Value:
       Fn::Join:
-      - ''
-      - - http://
-        - Fn::GetAtt:
-          - ApplicationLoadBalancer
-<<<<<<< HEAD
-          - DNSName
-=======
-          - DNSName
->>>>>>> 4b3723a3e29d9d4f395ae08546dc3ce481bf4bad
+        - ""
+        - - http://
+          - !GetAtt ApplicationLoadBalancer.DNSName

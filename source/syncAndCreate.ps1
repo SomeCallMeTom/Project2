@@ -1,0 +1,2 @@
+aws s3 sync . s3://darlington.project2 --exclude "*" --include "*.yml" --no-verify-ssl
+aws cloudformation create-stack --stack-name Project2Main --template-url https://s3.amazonaws.com/darlington.project2/main.yml --no-verify-ssl
